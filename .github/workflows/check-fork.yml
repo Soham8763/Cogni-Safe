@@ -1,0 +1,16 @@
+name: Enforce Fork Workflow
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  check-fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR is from a fork
+        run: |
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" == "${{ github.repository }}" ]; then
+            echo "::error::Direct pull requests from the main repository are not allowed. Please fork the repository and create a Pull Request from your fork."
+            exit 1
+          fi
