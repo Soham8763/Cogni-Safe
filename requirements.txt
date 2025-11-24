@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+numpy
+pandas
+scipy
+scikit-learn
+joblib
+xgboost
+matplotlib
+jupyter
+requests
+python-multipart
+tqdm
+seaborn
+mne
