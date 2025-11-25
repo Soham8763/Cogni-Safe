@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { postPredictEEG, type PredictionResponse } from '../services/api';
 
+
+
 interface TestEEGPageProps {
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
@@ -29,22 +31,40 @@ const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
     setError(null);
 
     try {
-      const text = await file.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        throw new Error("Invalid JSON file.");
+      let response: PredictionResponse;
+
+      if (file.name.endsWith('.json')) {
+        // Legacy JSON handling
+        const text = await file.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          throw new Error("Invalid JSON file.");
+        }
+        const eegData = Array.isArray(data) ? data : data.eeg;
+        if (!Array.isArray(eegData)) {
+          throw new Error("Invalid EEG data format. Expected array of arrays.");
+        }
+        response = await postPredictEEG({ eeg: eegData });
+      } else {
+        // New file upload handling for CSV/EDF
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('http://localhost:8000/predict_file', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.detail || "File upload failed");
+        }
+
+        response = await res.json();
       }
 
-      // Expecting JSON to have 'eeg' field or be the array itself
-      const eegData = Array.isArray(data) ? data : data.eeg;
-
-      if (!Array.isArray(eegData)) {
-        throw new Error("Invalid EEG data format. Expected array of arrays.");
-      }
-
-      const response = await postPredictEEG({ eeg: eegData });
       setResult(response);
     } catch (err: any) {
       setError(err.message || "An error occurred.");
@@ -56,23 +76,25 @@ const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-50 p-4">
       <div className="w-full max-w-3xl">
-        <button
-          onClick={onBack}
-          className="mb-6 text-blue-600 hover:underline flex items-center"
-        >
-          &larr; Back to Home
-        </button>
+        {onBack && (
+            <button
+            onClick={onBack}
+            className="mb-6 text-blue-600 hover:underline flex items-center"
+            >
+            &larr; Back to Home
+            </button>
+        )}
 
         <div className="bg-white p-8 rounded-xl shadow-md">
           <h2 className="text-3xl font-bold text-gray-800 mb-6">Upload EEG Data</h2>
 
           <div className="mb-6">
             <label className="block text-gray-700 font-medium mb-2">
-              Select JSON File (Array of Arrays)
+              Select File (.csv, .edf, .json)
             </label>
             <input
               type="file"
-              accept=".json"
+              accept=".json,.csv,.edf"
               onChange={handleFileChange}
               className="block w-full text-sm text-gray-500
                 file:mr-4 file:py-2 file:px-4
@@ -81,6 +103,9 @@ const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
                 file:bg-blue-50 file:text-blue-700
                 hover:file:bg-blue-100"
             />
+            <p className="mt-2 text-sm text-gray-500">
+                Supported formats: CSV (16 channels), EDF (Standard Medical Format), JSON
+            </p>
           </div>
 
           <button
