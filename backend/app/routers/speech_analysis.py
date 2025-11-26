@@ -120,16 +120,16 @@ async def analyze_speech(
         acoustic_features = extract_acoustic_features(tmp_path)
         linguistic_features = extract_linguistic_features(transcription_text)
 
-        # 6. Pauses
-        pause_analysis = analyze_pauses(word_timestamps)
+        # 6. Pauses - Use AUDIO-BASED detection (more accurate than Whisper timestamps)
+        from backend.app.services.speech.pause_analyzer import detect_pauses_from_audio
+        pause_analysis = detect_pauses_from_audio(tmp_path, min_silence_duration=0.3)
 
-        # 7. ML-Based Scoring
+        # 7. ML-Based Scoring (with improved pause analysis)
         scores = calculate_ml_risk_score(
             reaction_time_ms=reaction_time_ms,
             speech_rate_wpm=acoustic_features.get("speech_rate_wpm", 120),
-            avg_pause_duration=pause_analysis["avg_pause_duration"],
-            word_accuracy=accuracy,
-            long_pause_count=pause_analysis["long_pause_count"]
+            pause_analysis=pause_analysis,  # Now using audio-based pauses!
+            word_accuracy=accuracy
         )
 
         # Store result in memory
@@ -172,7 +172,12 @@ async def analyze_speech(
             speech_rate_wpm=acoustic_features.get("speech_rate_wpm", 0), # Need to implement wpm calc in extractor properly
             avg_pause_duration=pause_analysis["avg_pause_duration"],
             long_pause_count=pause_analysis["long_pause_count"],
-            pause_locations=[PauseLocation(**p) for p in pause_analysis["pause_locations"]],
+            pause_locations=[
+                PauseLocation(
+                    after_word=f"pause_{i+1}",  # Audio-based doesn't have word context
+                    duration=p["duration"]
+                ) for i, p in enumerate(pause_analysis.get("pause_locations", []))
+            ],
             risk_score=scores["overall_risk"],
             risk_level=scores["risk_level"],
             features=SpeechFeatures(
