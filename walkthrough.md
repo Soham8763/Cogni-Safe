@@ -1,52 +1,77 @@
-# CogniSafe EEG Dementia Screener Walkthrough
+# Speech Analysis Integration Walkthrough
 
-This document outlines the steps to run and verify the CogniSafe EEG Dementia Screener.
+This document outlines the newly integrated Speech Analysis module for CogniSafe. This feature assesses cognitive health through speech patterns, analyzing reaction time, speech rate, pauses, and linguistic accuracy.
 
-## 1. Prerequisites
-Ensure you have `python` (3.8+) and `node` (16+) installed.
+## Features Implemented
 
-## 2. Setup and Training
-First, install dependencies and train the model.
+### Backend
+- **Whisper Integration**: Uses OpenAI's Whisper API for high-accuracy transcription and word-level timestamps.
+- **Feature Extraction**:
+    - **Acoustic**: Pitch, Energy, MFCCs, Speech Rate (via `librosa`).
+    - **Linguistic**: Word count, lexical diversity, part-of-speech distribution (via `spaCy`).
+    - **Pause Analysis**: Detects hesitation and long pauses between words.
+- **Scoring Engine**: Rule-based system to calculate a dementia risk score based on reaction time, speech rate, pauses, and accuracy.
+- **Audiometry**: Adaptive threshold test to rule out hearing loss as a confounding factor.
 
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
+### Frontend
+- **Speech Analysis Tab**: A new dedicated section in the application.
+- **Interactive Test Flow**:
+    1.  **Instructions**: Clear guidance for the user.
+    2.  **Audiometry Check**: A quick hearing test using generated tones.
+    3.  **Speech Task**: Users listen to stimulus sentences and repeat them.
+    4.  **Real-time Feedback**: Visual reaction timer and audio level meter.
+- **Results Dashboard**: Comprehensive report showing risk scores, component breakdown, and recommendations.
 
-# Run the notebooks in order to train the model
-# You can use Jupyter or run them as scripts if converted, but for now, open them in VS Code or Jupyter Lab.
-# Key notebook: notebooks/03_model_training_and_evaluation.ipynb
-```
+## How to Test
 
-*Note: The model `models/eeg_best_model.joblib` must exist for the backend to work.*
+1.  **Start the Backend**:
+    ```bash
+    source venv/bin/activate
+    uvicorn backend.app.main:app --reload
+    ```
+    *Note: Ensure `OPENAI_API_KEY` is set in your `.env` file for real transcription. If missing, the system will use dummy data for demonstration.*
 
-## 3. Start the Backend
-Open a terminal in the project root:
+2.  **Start the Frontend**:
+    ```bash
+    cd frontend
+    npm run dev
+    ```
 
-```bash
-uvicorn backend.app.main:app --reload
-```
+3.  **Run the Assessment**:
+    - Open the app in your browser (e.g., `http://localhost:5173`).
+    - Click on the **Speech Analysis** tab.
+    - Click **Start Assessment**.
+    - Follow the prompts to complete the hearing check and speech tasks.
+    - View your results at the end.
 
-You should see: `Uvicorn running on http://127.0.0.1:8000`
+## Testing with Swagger UI
 
-## 4. Start the Frontend
-Open a new terminal in `frontend/`:
+FastAPI provides an interactive API documentation interface (Swagger UI) that you can use to test the backend endpoints directly.
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+1.  **Access Swagger UI**:
+    - Open your browser and navigate to `http://localhost:8000/docs`.
+    - You will see a list of all available endpoints, grouped by tags (e.g., `speech`).
 
-Open the URL shown (usually `http://localhost:5173`).
+2.  **Test Speech Endpoints**:
+    - **Start Test**: Expand `POST /api/speech/start-test`, click "Try it out", enter a `user_id`, and execute. Copy the returned `session_id`.
+    - **Audiometry**: Expand `POST /api/speech/audiometry`, click "Try it out", enter test values (e.g., `frequency_hz: 1000`, `volume_level: 0.5`, `user_heard: true`), and execute.
+    - **Analyze Speech**: Expand `POST /api/speech/analyze`. This requires uploading a file.
+        - Click "Try it out".
+        - Enter the `session_id` you copied.
+        - Enter a `stimulus_sentence` (e.g., "The cat is on the mat").
+        - Enter timestamps (e.g., `audio_end_timestamp: 1000`, `speech_start_timestamp: 500`).
+        - Upload a small `.wav` file (you can record one using your system recorder or use a sample file).
+        - Click "Execute" to see the analysis results (transcription, risk score, features).
+    - **Get Results**: Expand `GET /api/speech/results/{session_id}`, enter your `session_id`, and execute to see the final report.
 
-## 5. Usage
-1.  Click **Start Screening** on the Home Page.
-2.  Upload a JSON file containing EEG data.
-    - Format: `[[channel1_sample1, channel2_sample1, ...], ...]` or `{"eeg": [...]}`.
-    - You can generate a test sample using `notebooks/04_export_model_and_build_fastapi.ipynb`.
-3.  View the Risk Level and Probability.
+## Architecture
 
-## 6. Verification Checklist
-- [x] Backend starts without errors.
-- [x] Frontend loads and navigates to Test Page.
-- [x] API accepts valid JSON and returns prediction.
+- **`backend/app/services/speech/`**: Contains all logic for VAD, feature extraction, and scoring.
+- **`backend/app/routers/speech_analysis.py`**: API endpoints handling the test flow.
+- **`frontend/src/components/speech-analysis/`**: React components for the UI.
+- **`frontend/src/hooks/`**: Custom hooks (`useAudioRecorder`, `useSpeechAnalysis`) for state management.
+
+## Next Steps (Future Enhancements)
+- **ML Model**: Replace rule-based scoring with a trained classifier (Random Forest / XGBoost) using the extracted features.
+- **VAD refinement**: Implement server-side VAD for more precise reaction time measurement.
+- **Longitudinal Tracking**: Save results to a database to track changes over time.

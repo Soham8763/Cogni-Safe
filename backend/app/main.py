@@ -6,9 +6,18 @@ import os
 import asyncio
 import json
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from .schemas import EEGSampleRequest, PredictionResponse
 from .feature_extraction import extract_features_from_segment
 from .data_processing import parse_edf, parse_csv
+from backend.app.routers import speech_analysis
+
+# ... (existing code) ...
+
+
 
 # ... (existing code) ...
 
@@ -39,6 +48,8 @@ async def lifespan(app: FastAPI):
     # Clean up if needed
 
 app = FastAPI(title="CogniSafe EEG Screener", lifespan=lifespan)
+
+app.include_router(speech_analysis.router)
 
 # CORS
 app.add_middleware(
@@ -107,36 +118,7 @@ async def websocket_endpoint(websocket: WebSocket):
     finally:
         await websocket.close()
 
-async def lifespan(app: FastAPI):
-    # Load model on startup
-    global model, scaler
-    model_path = os.path.join("models", "eeg_best_model.joblib")
-    # scaler_path = os.path.join("models", "eeg_scaler.joblib") # If scaler is separate
 
-    try:
-        # Check if model exists (it might not if notebooks haven't run)
-        if os.path.exists(model_path):
-            model = joblib.load(model_path)
-            print(f"Model loaded from {model_path}")
-        else:
-            print(f"Warning: Model not found at {model_path}. Inference will fail.")
-
-    except Exception as e:
-        print(f"Error loading model: {e}")
-
-    yield
-    # Clean up if needed
-
-app = FastAPI(title="CogniSafe EEG Screener", lifespan=lifespan)
-
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], # Allow all for demo
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 @app.get("/health")
 def health_check():
