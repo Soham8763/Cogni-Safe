@@ -2,9 +2,10 @@ import { useState } from 'react';
 import TestEEGPage from './components/TestEEGPage'
 import LiveMonitor from './components/LiveMonitor'
 import SpeechTest from './components/speech-analysis/SpeechTest'
+import CognitiveGamesPage from './components/cognitive-games/CognitiveGamesPage'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'live' | 'speech'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'live' | 'speech' | 'games'>('upload');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,6 +46,16 @@ function App() {
               >
                 Speech Analysis
               </button>
+              <button
+                onClick={() => setActiveTab('games')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'games'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Cognitive Games
+              </button>
             </div>
           </div>
         </div>
@@ -54,6 +65,7 @@ function App() {
         {activeTab === 'upload' && <TestEEGPage />}
         {activeTab === 'live' && <LiveMonitor />}
         {activeTab === 'speech' && <SpeechTest />}
+        {activeTab === 'games' && <CognitiveGamesPage />}
       </main>
     </div>
   )
