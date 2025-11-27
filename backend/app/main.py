@@ -13,7 +13,7 @@ load_dotenv()
 from .schemas import EEGSampleRequest, PredictionResponse
 from .feature_extraction import extract_features_from_segment
 from .data_processing import parse_edf, parse_csv
-from backend.app.routers import speech_analysis
+from backend.app.routers import speech_analysis, cognitive_games
 
 # ... (existing code) ...
 
@@ -50,6 +50,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CogniSafe EEG Screener", lifespan=lifespan)
 
 app.include_router(speech_analysis.router)
+app.include_router(cognitive_games.router)
 
 # CORS
 app.add_middleware(

@@ -85,3 +85,63 @@ class SentenceRecording(Base):
 
     # Relationship
     test_result = relationship("SpeechTestResult", back_populates="recordings")
+
+
+class CognitiveGameSession(Base):
+    """Cognitive games test session"""
+    __tablename__ = "cognitive_game_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String(255), unique=True, nullable=False, index=True)
+    user_id = Column(String(255), index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Game metadata
+    game_type = Column(String(50), nullable=False)  # "memory_match", "stroop_test", etc.
+    completed = Column(Boolean, default=False)
+
+    # Performance metrics
+    total_time_ms = Column(Integer)
+    total_attempts = Column(Integer)
+    correct_attempts = Column(Integer)
+    errors = Column(Integer)
+
+    # Scores
+    accuracy = Column(Float)  # Percentage
+    avg_reaction_time_ms = Column(Float)
+    score = Column(Float)  # 0-100
+    performance_level = Column(String(20))  # "Excellent", "Good", "Fair", "Poor"
+
+    # Cognitive metrics
+    memory_score = Column(Float)
+    attention_score = Column(Float)
+    executive_function_score = Column(Float)
+    processing_speed_score = Column(Float)
+
+    # Raw data
+    game_config = Column(JSON)  # Game configuration used
+    attempts_data = Column(JSON)  # All attempts with timestamps
+
+    # Relationship
+    attempts = relationship("GameAttempt", back_populates="session", cascade="all, delete-orphan")
+
+
+class GameAttempt(Base):
+    """Individual attempt within a game"""
+    __tablename__ = "game_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String(255), ForeignKey("cognitive_game_sessions.session_id"), nullable=False)
+    attempt_number = Column(Integer, nullable=False)
+
+    # Attempt data
+    attempted_at = Column(DateTime(timezone=True), server_default=func.now())
+    reaction_time_ms = Column(Integer)
+    is_correct = Column(Boolean)
+
+    # Game-specific data
+    stimulus = Column(JSON)  # What was shown (e.g., card positions, word/color)
+    user_response = Column(JSON)  # What user did
+
+    # Relationship
+    session = relationship("CognitiveGameSession", back_populates="attempts")
