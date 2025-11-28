@@ -11,3 +11,4 @@ venv/
 # Data
 *.csv
 *.tar.gz
+frontend/frames/
