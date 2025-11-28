@@ -53,11 +53,11 @@ graph TD
     Speech_In --> Speech_Proc
     Game_In --> Game_Proc
 
-    EEG_Proc -->|Risk Score & Features| Unified
-    Speech_Proc -->|Acoustic & Ling. Features| Unified
-    Game_Proc -->|Reaction Time & Accuracy| Unified
+    EEG_Proc -->|"Risk Score & Features"| Unified
+    Speech_Proc -->|"Acoustic & Ling. Features"| Unified
+    Game_Proc -->|"Reaction Time & Accuracy"| Unified
 
-    Unified -->|Weighted Aggregation| Risk
+    Unified -->|"Weighted Aggregation"| Risk
     Risk --> DB
     Risk --> Report
 ```
@@ -87,7 +87,7 @@ graph TD
         Raw[Raw EEG Data] --> Resample[Resample @ 256Hz]
         Resample --> Bandpass[Bandpass Filter 0.5-50Hz]
         Bandpass --> Notch[Notch Filter 60Hz]
-        Notch --> Artifact[Artifact Rejection (ICA)]
+        Notch --> Artifact["Artifact Rejection (ICA)"]
     end
 
     subgraph "2. Feature Extraction (Frequency Domain)"
@@ -97,15 +97,15 @@ graph TD
         PSD --> |Integration| Bands
 
         subgraph "Spectral Bands"
-            Bands --> Delta[Delta (0.5-4Hz)]
-            Bands --> Theta[Theta (4-8Hz)]
-            Bands --> Alpha[Alpha (8-13Hz)]
-            Bands --> Beta[Beta (13-30Hz)]
+            Bands --> Delta["Delta (0.5-4Hz)"]
+            Bands --> Theta["Theta (4-8Hz)"]
+            Bands --> Alpha["Alpha (8-13Hz)"]
+            Bands --> Beta["Beta (13-30Hz)"]
         end
 
         Delta & Theta & Alpha & Beta --> Ratios[Clinical Ratios]
-        Ratios --> TBR[Theta/Beta Ratio]
-        Ratios --> DAR[Delta/Alpha Ratio]
+        Ratios --> TBR["Theta/Beta Ratio"]
+        Ratios --> DAR["Delta/Alpha Ratio"]
     end
 
     subgraph "3. Inference Engine"
@@ -136,7 +136,7 @@ graph TD
     subgraph "Stream A: Acoustic Analysis (Librosa)"
         Parallel --> AudioProc[Signal Processing]
         AudioProc --> MFCC[MFCC Extraction]
-        AudioProc --> F0[Fundamental Freq (F0)]
+        AudioProc --> F0["Fundamental Freq (F0)"]
         AudioProc --> Silence[Silence/Pause Analysis]
 
         F0 --> Jitter[Jitter & Shimmer]
@@ -180,8 +180,8 @@ graph TD
     end
 
     subgraph "Raw Metric Capture"
-        Memory -->|State Change| MemAcc[Accuracy %]
-        Stroop -->|Timestamp Diff| RT[Reaction Time (ms)]
+        Memory -->|State Change| MemAcc["Accuracy %"]
+        Stroop -->|Timestamp Diff| RT["Reaction Time (ms)"]
         Trail -->|Path Validation| Errors[Error Count]
     end
 
