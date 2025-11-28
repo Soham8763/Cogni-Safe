@@ -10,3 +10,12 @@ class PredictionResponse(BaseModel):
     probability: float
     risk_level: str
     model_version: str
+
+
+class SaveEEGResultRequest(BaseModel):
+    user_id: str
+    status_class: int
+    probability: float
+    risk_level: str
+    model_version: str
+    filename: str = ""

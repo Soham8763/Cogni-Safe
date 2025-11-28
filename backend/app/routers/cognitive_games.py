@@ -278,6 +278,7 @@ def calculate_stroop_score(accuracy: float, avg_reaction_time: float) -> float:
     return max(0, min(100, score))
 
 
+
 def calculate_speed_score(avg_reaction_time: float) -> float:
     """Calculate processing speed score from reaction time"""
     # Excellent: <800ms = 100
@@ -293,3 +294,41 @@ def calculate_speed_score(avg_reaction_time: float) -> float:
         return 70 - ((avg_reaction_time - 1500) / 1000 * 30)
     else:
         return max(0, 40 - ((avg_reaction_time - 2500) / 1000 * 10))
+
+
+def calculate_trail_making_score(accuracy: float, avg_reaction_time: float, total_time_ms: int, errors: int) -> float:
+    """Calculate score for Trail Making test"""
+    # Base score from accuracy
+    base_score = accuracy
+
+    # Time penalty (Part A+B should take 60-120 seconds total)
+    total_time_sec = total_time_ms / 1000
+    if total_time_sec < 60:
+        time_bonus = 10
+    elif total_time_sec < 90:
+        time_bonus = 5
+    elif total_time_sec < 120:
+        time_bonus = 0
+    else:
+        time_bonus = -((total_time_sec - 120) / 10)  # -1 per 10 seconds over
+
+    # Error penalty
+    error_penalty = errors * 5
+
+    # Reaction time component
+    speed_component = calculate_speed_score(avg_reaction_time) * 0.3
+
+    final_score = base_score + time_bonus - error_penalty + (speed_component * 0.2)
+    return max(0, min(100, final_score))
+
+
+def calculate_pattern_score(accuracy: float, avg_reaction_time: float) -> float:
+    """Calculate score for Pattern Recognition test"""
+    # Heavily weighted on accuracy (pattern recognition is about correctness)
+    accuracy_weight = 0.7
+    speed_weight = 0.3
+
+    speed_component = calculate_speed_score(avg_reaction_time)
+
+    final_score = (accuracy * accuracy_weight) + (speed_component * speed_weight)
+    return max(0, min(100, final_score))

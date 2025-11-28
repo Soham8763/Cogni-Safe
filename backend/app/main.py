@@ -10,10 +10,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from .schemas import EEGSampleRequest, PredictionResponse
+from .schemas import EEGSampleRequest, PredictionResponse, SaveEEGResultRequest
 from .feature_extraction import extract_features_from_segment
 from .data_processing import parse_edf, parse_csv
-from backend.app.routers import speech_analysis, cognitive_games
+from backend.app.routers import speech_analysis, cognitive_games, unified_analysis
+from backend.app.database import get_db
+from sqlalchemy.orm import Session
+from fastapi import Depends
 
 # ... (existing code) ...
 
@@ -51,6 +54,7 @@ app = FastAPI(title="CogniSafe EEG Screener", lifespan=lifespan)
 
 app.include_router(speech_analysis.router)
 app.include_router(cognitive_games.router)
+app.include_router(unified_analysis.router)
 
 # CORS
 app.add_middleware(
@@ -191,4 +195,48 @@ async def predict_file(file: UploadFile = File(...)):
     except HTTPException as he:
         raise he
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/eeg/save_result")
+async def save_eeg_result(
+    request: SaveEEGResultRequest,
+    db: Session = Depends(get_db)
+):
+    """Save EEG test result to database"""
+    try:
+        from backend.app.models.db_models import EEGTestResult
+
+        # Convert probability to risk score (0-100)
+        risk_score = request.probability * 100
+
+        # Determine file type
+        file_type = "unknown"
+        if request.filename:
+            if request.filename.endswith('.csv'):
+                file_type = "csv"
+            elif request.filename.endswith('.edf'):
+                file_type = "edf"
+            elif request.filename.endswith('.json'):
+                file_type = "json"
+
+        eeg_result = EEGTestResult(
+            user_id=request.user_id,
+            status_class=request.status_class,
+            probability=request.probability,
+            risk_level=request.risk_level,
+            risk_score=risk_score,
+            model_version=request.model_version,
+            filename=request.filename,
+            file_type=file_type,
+            completed=True
+        )
+
+        db.add(eeg_result)
+        db.commit()
+        db.refresh(eeg_result)
+
+        return {"success": True, "id": eeg_result.id}
+    except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))

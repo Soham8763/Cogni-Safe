@@ -3,9 +3,21 @@ import TestEEGPage from './components/TestEEGPage'
 import LiveMonitor from './components/LiveMonitor'
 import SpeechTest from './components/speech-analysis/SpeechTest'
 import CognitiveGamesPage from './components/cognitive-games/CognitiveGamesPage'
+import AssessmentDashboard from './components/AssessmentDashboard'
+import UnifiedResults from './components/UnifiedResults'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'live' | 'speech' | 'games'>('upload');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'upload' | 'live' | 'speech' | 'games' | 'results'>('dashboard');
+
+  // Global user ID management
+  const [userId] = useState<string>(() => {
+    let id = sessionStorage.getItem('cogni_safe_user_id');
+    if (!id) {
+      id = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('cogni_safe_user_id', id);
+    }
+    return id;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -16,6 +28,16 @@ function App() {
               <span className="text-2xl font-bold text-blue-600">CogniSafe</span>
             </div>
             <div className="flex space-x-4">
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'dashboard'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Assessment Dashboard
+              </button>
               <button
                 onClick={() => setActiveTab('upload')}
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -57,15 +79,46 @@ function App() {
                 Cognitive Games
               </button>
             </div>
+
+            <div className="flex items-center">
+              <button
+                onClick={() => {
+                  if (window.confirm('Are you sure? This will clear all current progress.')) {
+                    sessionStorage.removeItem('cogni_safe_user_id');
+                    window.location.reload();
+                  }
+                }}
+                className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 border border-red-200"
+              >
+                Start New Session
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       <main className="py-10">
-        {activeTab === 'upload' && <TestEEGPage />}
+        {activeTab === 'dashboard' && <AssessmentDashboard setActiveTab={setActiveTab} />}
+        {activeTab === 'upload' && (
+          <TestEEGPage
+            userId={userId}
+            onComplete={() => setActiveTab('dashboard')}
+          />
+        )}
         {activeTab === 'live' && <LiveMonitor />}
-        {activeTab === 'speech' && <SpeechTest />}
-        {activeTab === 'games' && <CognitiveGamesPage />}
+        {activeTab === 'speech' && (
+          <SpeechTest
+            userId={userId}
+            onComplete={() => setActiveTab('dashboard')}
+          />
+        )}
+        {activeTab === 'games' && (
+          <CognitiveGamesPage
+            userId={userId}
+            onComplete={() => setActiveTab('dashboard')}
+          />
+        )}
+        {activeTab === 'results' && <UnifiedResults setActiveTab={setActiveTab} />}
       </main>
     </div>
   )

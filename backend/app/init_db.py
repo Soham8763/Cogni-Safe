@@ -2,8 +2,8 @@
 Initialize the database tables.
 Run this script once to create the database schema.
 """
-from backend.app.database import engine, Base
-from backend.app.models.db_models import SpeechTestResult, SentenceRecording
+from database import engine, Base
+from models.db_models import SpeechTestResult, SentenceRecording, CognitiveGameSession, GameAttempt, EEGTestResult
 
 def init_db():
     """Create all tables in the database"""

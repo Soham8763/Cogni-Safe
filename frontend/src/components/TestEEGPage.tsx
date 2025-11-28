@@ -4,10 +4,12 @@ import { postPredictEEG, type PredictionResponse } from '../services/api';
 
 
 interface TestEEGPageProps {
+  userId?: string;
+  onComplete?: () => void;
   onBack?: () => void;
 }
 
-const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
+const TestEEGPage: React.FC<TestEEGPageProps> = ({ userId, onComplete, onBack }) => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictionResponse | null>(null);
@@ -66,6 +68,29 @@ const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
       }
 
       setResult(response);
+
+      // Save result to database if userId is provided
+      if (userId && response) {
+        try {
+          await fetch('http://localhost:8000/api/eeg/save_result', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              status_class: response.status_class,
+              probability: response.probability,
+              risk_level: response.risk_level,
+              model_version: response.model_version,
+              filename: file.name
+            }),
+          });
+        } catch (saveError) {
+          console.error('Failed to save EEG result:', saveError);
+          // Don't fail the whole operation if save fails
+        }
+      }
     } catch (err: any) {
       setError(err.message || "An error occurred.");
     } finally {
@@ -152,6 +177,18 @@ const TestEEGPage: React.FC<TestEEGPageProps> = ({ onBack }) => {
               <div className="mt-4 text-right text-xs text-gray-400">
                 Model Version: {result.model_version}
               </div>
+
+              {/* Return to Dashboard button */}
+              {onComplete && (
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={onComplete}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+                  >
+                    Return to Dashboard
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
