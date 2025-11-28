@@ -7,7 +7,12 @@ import AudiometryTest from './AudiometryTest';
 import SpeechResults from './SpeechResults';
 import type { SpeechAnalysisResult } from '../../types/speech';
 
-const SpeechTest: React.FC = () => {
+interface SpeechTestProps {
+    userId: string;
+    onComplete?: () => void;
+}
+
+const SpeechTest: React.FC<SpeechTestProps> = ({ userId, onComplete }) => {
     const { startTest, analyze, isLoading, error } = useSpeechAnalysis();
 
     const [phase, setPhase] = useState<'intro' | 'audiometry' | 'recording' | 'results'>('intro');
@@ -22,7 +27,7 @@ const SpeechTest: React.FC = () => {
     const [lastAnalysis, setLastAnalysis] = useState<SpeechAnalysisResult | null>(null);
 
     const handleStart = async () => {
-        const session = await startTest("user_123"); // Dummy user ID
+        const session = await startTest(userId);
         if (session) {
             setSessionId(session.session_id);
             setSentences(session.stimulus_sentences);
@@ -129,7 +134,7 @@ const SpeechTest: React.FC = () => {
     }
 
     if (phase === 'results' && sessionId) {
-        return <SpeechResults sessionId={sessionId} onRestart={() => window.location.reload()} />;
+        return <SpeechResults sessionId={sessionId} onRestart={() => window.location.reload()} onComplete={onComplete} />;
     }
 
     return (

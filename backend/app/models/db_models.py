@@ -145,3 +145,26 @@ class GameAttempt(Base):
 
     # Relationship
     session = relationship("CognitiveGameSession", back_populates="attempts")
+
+
+class EEGTestResult(Base):
+    """Table for EEG test results"""
+    __tablename__ = "eeg_test_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(255), index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Analysis results
+    status_class = Column(Integer)  # 0 or 1
+    probability = Column(Float)  # 0.0 to 1.0
+    risk_level = Column(String(20))  # Low, Medium, High
+    risk_score = Column(Float)  # 0-100 (probability * 100)
+    model_version = Column(String(50))
+
+    # File metadata
+    filename = Column(String(255))
+    file_type = Column(String(10))  # csv, edf, json
+
+    # Completed flag
+    completed = Column(Boolean, default=True)

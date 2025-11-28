@@ -6,9 +6,10 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGri
 interface SpeechResultsProps {
     sessionId: string;
     onRestart: () => void;
+    onComplete?: () => void;
 }
 
-const SpeechResults: React.FC<SpeechResultsProps> = ({ sessionId, onRestart }) => {
+const SpeechResults: React.FC<SpeechResultsProps> = ({ sessionId, onRestart, onComplete }) => {
     const [results, setResults] = useState<SpeechRiskScore | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -107,7 +108,15 @@ const SpeechResults: React.FC<SpeechResultsProps> = ({ sessionId, onRestart }) =
                 </div>
             </div>
 
-            <div className="text-center">
+            <div className="text-center space-x-4">
+                {onComplete && (
+                    <button
+                        onClick={onComplete}
+                        className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+                    >
+                        Return to Dashboard
+                    </button>
+                )}
                 <button
                     onClick={onRestart}
                     className="px-6 py-2 text-gray-500 hover:text-gray-700 underline"

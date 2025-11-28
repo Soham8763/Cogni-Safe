@@ -14,7 +14,12 @@ interface GameResult {
   performance_level: string;
 }
 
-const CognitiveGamesPage: React.FC = () => {
+interface CognitiveGamesPageProps {
+  userId: string;
+  onComplete?: () => void;
+}
+
+const CognitiveGamesPage: React.FC<CognitiveGamesPageProps> = ({ userId, onComplete }) => {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [results, setResults] = useState<GameResult[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,7 +63,7 @@ const CognitiveGamesPage: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: 'demo_user',  // Replace with actual user ID
+          user_id: userId,
           game_type: gameType
         }),
       });
@@ -199,8 +204,13 @@ const CognitiveGamesPage: React.FC = () => {
 
         {/* View Results button */}
         {results.length === 4 && (
-          <div className="mt-8 text-center">
-            <Button size="lg" onClick={() => window.location.href = '/results'}>
+          <div className="mt-8 text-center space-x-4">
+            {onComplete && (
+              <Button size="lg" onClick={onComplete} className="bg-blue-600 hover:bg-blue-700">
+                Return to Dashboard
+              </Button>
+            )}
+            <Button size="lg" variant="outline" onClick={() => window.location.href = '/results'}>
               View Complete Results
             </Button>
           </div>
