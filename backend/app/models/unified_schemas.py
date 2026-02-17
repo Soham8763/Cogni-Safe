@@ -9,13 +9,15 @@ class TestCompletionStatus(BaseModel):
     eeg_completed: bool = Field(..., description="Whether EEG test is complete")
     speech_completed: bool = Field(..., description="Whether speech test is complete")
     games_completed: bool = Field(..., description="Whether cognitive games are complete")
-    total_completed: int = Field(..., description="Number of tests completed (0-3)")
+    mmse_completed: bool = Field(..., description="Whether MMSE test is complete")
+    total_completed: int = Field(..., description="Number of tests completed (0-4)")
     all_complete: bool = Field(..., description="Whether all tests are complete")
 
     # Individual scores (null if not completed)
     eeg_score: Optional[float] = Field(None, description="EEG risk score (0-100)")
     speech_score: Optional[float] = Field(None, description="Speech risk score (0-100)")
     games_score: Optional[float] = Field(None, description="Games overall score (0-100)")
+    mmse_score: Optional[float] = Field(None, description="MMSE risk score (0-100)")
 
 class CognitiveDomainScores(BaseModel):
     """Scores for specific cognitive domains"""
@@ -30,9 +32,11 @@ class TestBreakdown(BaseModel):
     eeg_score: float = Field(..., description="EEG contribution to final score")
     speech_score: float = Field(..., description="Speech contribution to final score")
     games_score: float = Field(..., description="Games contribution to final score")
-    eeg_weight: float = Field(0.40, description="Weight applied to EEG")
-    speech_weight: float = Field(0.35, description="Weight applied to Speech")
-    games_weight: float = Field(0.25, description="Weight applied to Games")
+    mmse_score: float = Field(..., description="MMSE contribution to final score")
+    eeg_weight: float = Field(0.35, description="Weight applied to EEG")
+    speech_weight: float = Field(0.30, description="Weight applied to Speech")
+    mmse_weight: float = Field(0.20, description="Weight applied to MMSE")
+    games_weight: float = Field(0.15, description="Weight applied to Games")
 
 class KeyFinding(BaseModel):
     """Individual key finding from analysis"""

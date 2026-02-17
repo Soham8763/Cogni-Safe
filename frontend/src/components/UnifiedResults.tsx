@@ -17,6 +17,8 @@ import {
   Legend,
   Cell
 } from 'recharts';
+import { getDoctorRecommendations, type Doctor } from '../services/api';
+import BookingModal from './doctors/BookingModal.tsx';
 
 interface CognitiveDomains {
   memory: number;
@@ -30,8 +32,10 @@ interface TestBreakdown {
   eeg_score: number;
   speech_score: number;
   games_score: number;
+  mmse_score: number;
   eeg_weight: number;
   speech_weight: number;
+  mmse_weight: number;
   games_weight: number;
 }
 
@@ -62,6 +66,9 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({ setActiveTab }) => {
   const [results, setResults] = useState<UnifiedResults | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [recommendedDoctors, setRecommendedDoctors] = useState<Doctor[]>([]);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   // Get user ID from session storage (same as AssessmentDashboard)
   const [userId] = useState(() => {
@@ -81,6 +88,14 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({ setActiveTab }) => {
       }
       const data = await response.json();
       setResults(data);
+
+      // Fetch recommendations based on results
+      try {
+        const recoData = await getDoctorRecommendations(data);
+        setRecommendedDoctors(recoData);
+      } catch (recoErr) {
+        console.error("Failed to fetch doctor recommendations", recoErr);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -142,6 +157,12 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({ setActiveTab }) => {
       score: results.test_breakdown.games_score,
       weight: results.test_breakdown.games_weight * 100,
       color: '#EC4899'
+    },
+    {
+      name: 'MMSE',
+      score: results.test_breakdown.mmse_score,
+      weight: results.test_breakdown.mmse_weight * 100,
+      color: '#F59E0B'
     },
   ];
 
@@ -221,14 +242,14 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({ setActiveTab }) => {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            <div className="grid grid-cols-3 gap-4 mt-6">
+            <div className="grid grid-cols-4 gap-4 mt-6">
               {testBreakdownData.map((test) => (
                 <div key={test.name} className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-2xl font-bold" style={{ color: test.color }}>
                     {test.score.toFixed(0)}/100
                   </div>
                   <div className="text-sm text-gray-600">{test.name}</div>
-                  <div className="text-xs text-gray-500">Weight: {test.weight}%</div>
+                  <div className="text-xs text-gray-500">Weight: {test.weight.toFixed(0)}%</div>
                 </div>
               ))}
             </div>
@@ -328,6 +349,69 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({ setActiveTab }) => {
           </CardContent>
         </Card>
 
+        {/* AI Recommended Specialists - Highly Dynamic Section */}
+        {results.overall_risk_score > 30 && (
+          <Card className="mb-8 border-2 border-blue-200 overflow-hidden">
+            <div className="bg-blue-600 px-8 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white flex items-center">
+                <svg className="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                AI Recommended Specialists
+              </h2>
+              <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full border border-blue-400">
+                Matches your profile
+              </span>
+            </div>
+            <CardContent className="p-8">
+              <p className="text-gray-600 mb-6 italic">
+                Based on your lowest cognitive domain score ({
+                  Object.entries(results.cognitive_domains).sort((a,b) => (a[1] as number) - (b[1] as number))[0][0]
+                }), our agent recommends consulting these specialists:
+              </p>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                {recommendedDoctors.slice(0, 3).map((doc) => (
+                  <div key={doc.id} className="bg-white border rounded-xl p-5 hover:border-blue-500 transition-all group shadow-sm flex flex-col h-full">
+                    <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{doc.name}</h3>
+                    <p className="text-sm text-blue-600 font-semibold mb-3">{doc.specialty}</p>
+                    <div className="flex items-center text-xs text-gray-500 mb-4">
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mr-2">★ {doc.rating}</span>
+                      <span>{doc.experience_years}y Experience</span>
+                    </div>
+                    <div className="mt-auto">
+                      <Button
+                        onClick={() => {
+                          setSelectedDoctor(doc);
+                          setIsBookingOpen(true);
+                        }}
+                        className="w-full py-2 bg-blue-50 hover:bg-blue-600 border border-blue-200 text-blue-700 hover:text-white transition-all shadow-none"
+                      >
+                        Book Preview
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-start gap-4">
+                <div className="bg-white p-2 rounded-lg shadow-sm">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-blue-900">Why these doctors?</p>
+                  <p className="text-xs text-blue-700 leading-relaxed">
+                    Our Recommendation Engine analyzed your **{Object.entries(results.cognitive_domains).sort((a,b) => (a[1] as number) - (b[1] as number))[0][0]}** metrics
+                    across EEG and Speech results. These clinicians specialize in the neuro-pathways associated with these specific deficiencies.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Actions */}
         <div className="flex justify-center gap-4">
           <Button
@@ -345,6 +429,14 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({ setActiveTab }) => {
           </Button>
         </div>
       </div>
+
+      {isBookingOpen && selectedDoctor && (
+        <BookingModal
+          doctor={selectedDoctor}
+          userId={userId}
+          onClose={() => setIsBookingOpen(false)}
+        />
+      )}
     </div>
   );
 };

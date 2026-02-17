@@ -5,9 +5,11 @@ import SpeechTest from './speech-analysis/SpeechTest'
 import CognitiveGamesPage from './cognitive-games/CognitiveGamesPage'
 import AssessmentDashboard from './AssessmentDashboard'
 import UnifiedResults from './UnifiedResults'
+import ExploreDoctorsPage from './doctors/ExploreDoctorsPage';
+import MMSEAssessment from './mmse/MMSEAssessment';
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'upload' | 'live' | 'speech' | 'games' | 'results'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'upload' | 'live' | 'speech' | 'games' | 'results' | 'doctors' | 'mmse'>('dashboard');
 
   // Global user ID management
   const [userId] = useState<string>(() => {
@@ -78,6 +80,26 @@ function Dashboard() {
               >
                 Cognitive Games
               </button>
+              <button
+                onClick={() => setActiveTab('doctors')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'doctors'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Explore Specialists
+              </button>
+              <button
+                onClick={() => setActiveTab('mmse')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'mmse'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                MMSE Assessment
+              </button>
             </div>
 
             <div className="flex items-center">
@@ -119,6 +141,13 @@ function Dashboard() {
           />
         )}
         {activeTab === 'results' && <UnifiedResults setActiveTab={setActiveTab} />}
+        {activeTab === 'doctors' && <ExploreDoctorsPage userId={userId} />}
+        {activeTab === 'mmse' && (
+          <MMSEAssessment
+            userId={userId}
+            onComplete={() => setActiveTab('dashboard')}
+          />
+        )}
       </main>
     </div>
   )

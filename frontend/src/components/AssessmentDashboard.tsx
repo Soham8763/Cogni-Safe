@@ -10,11 +10,13 @@ interface TestStatus {
   eeg_completed: boolean;
   speech_completed: boolean;
   games_completed: boolean;
+  mmse_completed: boolean;
   total_completed: number;
   all_complete: boolean;
   eeg_score: number | null;
   speech_score: number | null;
   games_score: number | null;
+  mmse_score: number | null;
 }
 
 const AssessmentDashboard: React.FC<AssessmentDashboardProps> = ({ setActiveTab }) => {
@@ -91,10 +93,10 @@ const AssessmentDashboard: React.FC<AssessmentDashboardProps> = ({ setActiveTab 
             Cognitive Health Assessment
           </h1>
           <p className="text-xl text-gray-600">
-            Complete all 3 tests for comprehensive analysis
+            Complete all 4 tests for comprehensive analysis
           </p>
           <div className="mt-4 text-2xl font-semibold text-gray-700">
-            Progress: {status.total_completed}/3 tests completed
+            Progress: {status.total_completed}/4 tests completed
           </div>
         </div>
 
@@ -103,7 +105,7 @@ const AssessmentDashboard: React.FC<AssessmentDashboardProps> = ({ setActiveTab 
           <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
             <div
               className="bg-gradient-to-r from-blue-500 to-purple-500 h-4 transition-all duration-500 ease-out"
-              style={{ width: `${(status.total_completed / 3) * 100}%` }}
+              style={{ width: `${(status.total_completed / 4) * 100}%` }}
             />
           </div>
         </div>
@@ -229,6 +231,46 @@ const AssessmentDashboard: React.FC<AssessmentDashboardProps> = ({ setActiveTab 
               </div>
             </CardContent>
           </Card>
+
+          {/* MMSE Test Card */}
+          <Card className="hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-yellow-400">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="text-6xl mb-4">📋</div>
+                <h2 className="text-2xl font-bold mb-2">MMSE Test</h2>
+                <p className="text-gray-600 mb-4">Clinical mental state exam</p>
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <span className="text-lg">⏱️</span>
+                  <span className="text-gray-700">~15 minutes</span>
+                </div>
+
+                {status.mmse_completed ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center gap-2 text-green-600 text-lg font-semibold">
+                      <span>✅</span>
+                      <span>Complete</span>
+                    </div>
+                    <div className="text-2xl font-bold text-yellow-600">
+                      Score: {status.mmse_score?.toFixed(1)}/100
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center gap-2 text-gray-500 text-lg">
+                      <span>❌</span>
+                      <span>Not Done</span>
+                    </div>
+                    <Button
+                      onClick={() => (setActiveTab as any)('mmse')}
+                      className="w-full mt-4 bg-yellow-600 hover:bg-yellow-700"
+                    >
+                      Start MMSE
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* View Results Button */}
@@ -261,7 +303,7 @@ const AssessmentDashboard: React.FC<AssessmentDashboardProps> = ({ setActiveTab 
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-3 text-blue-900">📋 Instructions</h3>
                 <ul className="space-y-2 text-gray-700">
-                  <li>• Complete all three tests in any order</li>
+                  <li>• Complete all four diagnostic tests in any order</li>
                   <li>• Each test takes 5-15 minutes</li>
                   <li>• Find a quiet environment for best results</li>
                   <li>• Your progress is automatically saved</li>

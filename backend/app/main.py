@@ -13,8 +13,9 @@ load_dotenv()
 from .schemas import EEGSampleRequest, PredictionResponse, SaveEEGResultRequest
 from .feature_extraction import extract_features_from_segment
 from .data_processing import parse_edf, parse_csv
-from backend.app.routers import speech_analysis, cognitive_games, unified_analysis
-from backend.app.database import get_db
+from backend.app.routers import speech_analysis, cognitive_games, unified_analysis, doctor_management, mmse_analysis
+from backend.app.database import get_db, engine, Base
+from backend.app.models.db_models import * # Load all models
 from sqlalchemy.orm import Session
 from fastapi import Depends
 
@@ -31,6 +32,9 @@ scaler = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Create tables if they don't exist
+    Base.metadata.create_all(bind=engine)
+
     # Load model on startup
     global model, scaler
     model_path = os.path.join("models", "eeg_best_model.joblib")
@@ -55,6 +59,8 @@ app = FastAPI(title="CogniSafe EEG Screener", lifespan=lifespan)
 app.include_router(speech_analysis.router)
 app.include_router(cognitive_games.router)
 app.include_router(unified_analysis.router)
+app.include_router(doctor_management.router)
+app.include_router(mmse_analysis.router)
 
 # CORS
 app.add_middleware(
