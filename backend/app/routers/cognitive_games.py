@@ -111,7 +111,7 @@ async def submit_game(request: GameSubmitRequest, db: Session = Depends(get_db))
 
     # Calculate metrics
     total_attempts = len(request.attempts)
-    correct_attempts = sum(1 for a in request.attempts if a.get("is_correct", False))
+    correct_attempts = sum(1 for a in request.attempts if a.get("is_correct", False) or a.get("is_match", False))
     accuracy = (correct_attempts / total_attempts * 100) if total_attempts > 0 else 0
 
     # Calculate average reaction time

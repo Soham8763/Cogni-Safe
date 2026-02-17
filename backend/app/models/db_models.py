@@ -168,3 +168,21 @@ class EEGTestResult(Base):
 
     # Completed flag
     completed = Column(Boolean, default=True)
+
+
+class MMSEAssessmentResult(Base):
+    """Mini-Mental State Examination (MMSE) results"""
+    __tablename__ = "mmse_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(255), index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Overall results
+    total_score = Column(Float)  # 0 to 53
+    risk_level = Column(String(20))  # Normal, Mild, Moderate, Severe
+    mode = Column(String(20))  # "ai", "ocr", "manual"
+
+    # Detailed data
+    responses = Column(JSON)  # List of {question_id: X, score: Y, response: Z}
+    completed = Column(Boolean, default=True)

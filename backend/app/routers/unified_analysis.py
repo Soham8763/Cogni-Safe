@@ -19,7 +19,8 @@ from backend.app.models.unified_schemas import (
 from backend.app.models.db_models import (
     SpeechTestResult,
     CognitiveGameSession,
-    EEGTestResult
+    EEGTestResult,
+    MMSEAssessmentResult
 )
 
 router = APIRouter(
@@ -29,9 +30,10 @@ router = APIRouter(
 
 # Weights for multi-modal fusion
 WEIGHTS = {
-    "eeg": 0.40,      # 40% - Most objective
-    "speech": 0.35,   # 35% - Strong research backing
-    "games": 0.25     # 25% - Behavioral indicators
+    "eeg": 0.35,      # 35% - Objective
+    "speech": 0.30,   # 30% - Research backing
+    "mmse": 0.20,     # 20% - Clinical baseline
+    "games": 0.15     # 15% - Behavioral
 }
 
 @router.get("/status/{user_id}", response_model=TestCompletionStatus)
@@ -72,19 +74,30 @@ async def get_completion_status(user_id: str, db: Session = Depends(get_db)):
     eeg_completed = eeg_test is not None
     eeg_score = eeg_test.risk_score if eeg_test else None
 
-    total_completed = sum([eeg_completed, speech_completed, games_completed])
-    all_complete = total_completed == 3
+    # Check MMSE Test
+    mmse_test = db.query(MMSEAssessmentResult).filter(
+        MMSEAssessmentResult.user_id == user_id,
+        MMSEAssessmentResult.completed == True
+    ).order_by(desc(MMSEAssessmentResult.created_at)).first()
 
-    return TestCompletionStatus(
-        eeg_completed=eeg_completed,
-        speech_completed=speech_completed,
-        games_completed=games_completed,
-        total_completed=total_completed,
-        all_complete=all_complete,
-        eeg_score=eeg_score,
-        speech_score=speech_score,
-        games_score=games_score
-    )
+    mmse_completed = mmse_test is not None
+    mmse_score = (mmse_test.total_score / 53.0) * 100 if mmse_test else None
+
+    total_completed = sum([eeg_completed, speech_completed, games_completed, mmse_completed])
+    all_complete = total_completed == 4
+
+    return {
+        "eeg_completed": eeg_completed,
+        "speech_completed": speech_completed,
+        "games_completed": games_completed,
+        "mmse_completed": mmse_completed,
+        "total_completed": total_completed,
+        "all_complete": all_complete,
+        "eeg_score": eeg_score,
+        "speech_score": speech_score,
+        "games_score": games_score,
+        "mmse_score": mmse_score
+    }
 
 
 @router.get("/results/{user_id}", response_model=UnifiedAnalysisResponse)
@@ -96,10 +109,10 @@ async def get_unified_results(user_id: str, db: Session = Depends(get_db)):
     # 1. Fetch all test results
     status = await get_completion_status(user_id, db)
 
-    if not status.all_complete:
+    if not status["all_complete"]:
         raise HTTPException(
             status_code=400,
-            detail=f"Not all tests complete. Completed: {status.total_completed}/3"
+            detail=f"Not all tests complete. Completed: {status['total_completed']}/4"
         )
 
     # Get detailed results
@@ -114,13 +127,28 @@ async def get_unified_results(user_id: str, db: Session = Depends(get_db)):
     ).all()
 
     # 2. Calculate weighted final score
-    eeg_score = status.eeg_score or 0  # Placeholder
-    speech_score = status.speech_score or 0
-    games_score = status.games_score or 0
+    eeg_score = status["eeg_score"] or 0
+    speech_score = status["speech_score"] or 0
+    games_score = status["games_score"] or 0
+    mmse_score = status["mmse_score"] or 0
 
     overall_risk_score = (
         eeg_score * WEIGHTS["eeg"] +
         speech_score * WEIGHTS["speech"] +
+        mmse_score * (100 - WEIGHTS["mmse"]) + # MMSE score is inverted for risk in this specific weighted logic if needed
+        # Actually MMSE score is performance (0-53), risk would be 100 - (score/53*100)
+        (100 - mmse_score) * WEIGHTS["mmse"] +
+        games_score * WEIGHTS["games"]
+    )
+
+    # Correction: weight logic should be consistent.
+    # If eeg_score, speech_score, games_score are all RISK scores (higher = worse),
+    # then mmse risk = 100 - percentage_score.
+
+    overall_risk_score = (
+        eeg_score * WEIGHTS["eeg"] +
+        speech_score * WEIGHTS["speech"] +
+        (100 - mmse_score) * WEIGHTS["mmse"] +
         games_score * WEIGHTS["games"]
     )
 
@@ -160,13 +188,18 @@ async def get_unified_results(user_id: str, db: Session = Depends(get_db)):
         test_breakdown=TestBreakdown(
             eeg_score=eeg_score,
             speech_score=speech_score,
-            games_score=games_score
+            games_score=games_score,
+            mmse_score=mmse_score,
+            eeg_weight=WEIGHTS["eeg"],
+            speech_weight=WEIGHTS["speech"],
+            games_weight=WEIGHTS["games"],
+            mmse_weight=WEIGHTS["mmse"]
         ),
         cognitive_domains=cognitive_domains,
         key_findings=key_findings,
         recommendations=recommendations,
         assessment_date=datetime.now().isoformat(),
-        tests_included=["eeg", "speech", "cognitive_games"]
+        tests_included=["eeg", "speech", "cognitive_games", "mmse"]
     )
 
 
