@@ -12,12 +12,15 @@ except OSError:
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
 
-def extract_acoustic_features(audio_path: str) -> Dict[str, Any]:
+def extract_acoustic_features(audio_path: str, y_sr: tuple = None) -> Dict[str, Any]:
     """
     Extract acoustic features using librosa.
     """
     try:
-        y, sr = librosa.load(audio_path, sr=None)
+        if y_sr:
+            y, sr = y_sr
+        else:
+            y, sr = librosa.load(audio_path, sr=None)
 
         # Pitch (F0)
         f0, voiced_flag, voiced_probs = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
