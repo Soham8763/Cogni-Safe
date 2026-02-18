@@ -1,5 +1,6 @@
 # 🧠 CogniSafe
-### AI-Powered Multi-Modal Cognitive Health Assessment Platform
+
+## AI-Powered Multi-Modal Cognitive Health Assessment Platform
 
 ![CogniSafe Banner](https://img.shields.io/badge/AI-Powered-blueviolet?style=for-the-badge) ![HealthTech](https://img.shields.io/badge/Health-Tech-red?style=for-the-badge) ![Status](https://img.shields.io/badge/Status-Beta-success?style=for-the-badge)
 
@@ -9,11 +10,12 @@
 
 ## 🚀 Overview
 
-**CogniSafe** is a state-of-the-art diagnostic support tool designed to screen for early signs of cognitive decline (MCI, Alzheimer's, Dementia). Unlike traditional paper-based tests, CogniSafe leverages **multi-modal AI** to analyze three distinct biological and behavioral data streams:
+**CogniSafe** is a state-of-the-art diagnostic support tool designed to screen for early signs of cognitive decline (MCI, Alzheimer's, Dementia). Unlike traditional paper-based tests, CogniSafe leverages **multi-modal AI** to analyze four distinct biological and behavioral data streams:
 
-1.  **Neurophysiological**: EEG brainwave analysis.
-2.  **Biomarker**: Speech acoustic and linguistic patterns.
-3.  **Behavioral**: Gamified cognitive challenges.
+1. **Neurophysiological**: EEG brainwave analysis for spectral slowing.
+2. **Biomarker**: Speech acoustic (pitch, jitter, shimmer) and linguistic patterns.
+3. **Behavioral**: Gamified cognitive challenges and MMSE digitalization.
+4. **Kinematic**: IoT-based Gait analysis tracking spatial-temporal movement patterns.
 
 By synthesizing these diverse data points, CogniSafe provides a holistic, objective, and highly accurate risk assessment score.
 
@@ -22,6 +24,7 @@ By synthesizing these diverse data points, CogniSafe provides a holistic, object
 ## 🏗️ System Architecture
 
 ### 🌐 Combined System Architecture
+
 This diagram illustrates how the three distinct modalities converge into the Unified Fusion Engine to produce the final cognitive health assessment.
 
 ```mermaid
@@ -30,13 +33,15 @@ graph TD
         EEG_In[EEG File Upload]
         Speech_In[Microphone Input]
         Game_In[User Interaction]
+        Gait_In[IoT Sensor / Mobile Telemetry]
     end
 
     subgraph "Processing Layer"
         direction TB
         EEG_Proc[EEG Analysis Engine]
         Speech_Proc[Speech Processing Unit]
-        Game_Proc[Game Logic & Scoring]
+        Game_Proc[Game Logic & MMSE Engine]
+        Gait_Proc[Kinematic Feature Extractor]
     end
 
     subgraph "Fusion Layer"
@@ -45,17 +50,19 @@ graph TD
     end
 
     subgraph "Storage & Output"
-        DB[(SQLite Database)]
-        Report[Comprehensive Report]
+        DB[(PostgreSQL Database)]
+        Report[Comprehensive Clinical Report]
     end
 
     EEG_In --> EEG_Proc
     Speech_In --> Speech_Proc
     Game_In --> Game_Proc
+    Gait_In --> Gait_Proc
 
-    EEG_Proc -->|"Risk Score & Features"| Unified
-    Speech_Proc -->|"Acoustic & Ling. Features"| Unified
-    Game_Proc -->|"Reaction Time & Accuracy"| Unified
+    EEG_Proc -->|"Risk Score & Spectral Features"| Unified
+    Speech_Proc -->|"Acoustic & Ling. Biomarkers"| Unified
+    Game_Proc -->|"MMSE / Reaction Time"| Unified
+    Gait_Proc -->|"Gait Variability & Velocity"| Unified
 
     Unified -->|"Weighted Aggregation"| Risk
     Risk --> DB
@@ -67,19 +74,21 @@ graph TD
 ## 🧩 Deep-Dive Module Architectures
 
 ### 1. 🧠 EEG Analysis Module
+
 The EEG pipeline is designed to detect "spectral slowing," a hallmark of early-stage neurodegeneration. It processes raw multi-channel signals to extract frequency-domain biomarkers.
 
 **Technical Workflow:**
-1.  **Ingestion**: Accepts `.edf` (European Data Format) or `.csv` files.
-2.  **Preprocessing**:
-    *   **Resampling**: Standardizes all inputs to 256 Hz.
-    *   **Filtering**: Applies a 5th-order Butterworth bandpass filter (0.5 - 50 Hz) to remove DC drift and high-frequency noise.
-    *   **Notch Filter**: Removes 50/60 Hz power line interference.
-3.  **Feature Engineering**:
-    *   Computes **Power Spectral Density (PSD)** using Welch's method (Hamming window, 50% overlap).
-    *   Calculates **Relative Band Power (RBP)** for 5 bands: Delta (0.5-4Hz), Theta (4-8Hz), Alpha (8-13Hz), Beta (13-30Hz), Gamma (30-45Hz).
-    *   Derives clinical ratios: **Theta/Beta Ratio (TBR)** and **Delta/Alpha Ratio (DAR)**.
-4.  **Classification**: A trained Random Forest classifier (100 trees) predicts the probability of cognitive impairment based on the feature vector.
+
+1. **Ingestion**: Accepts `.edf` (European Data Format) or `.csv` files.
+2. **Preprocessing**:
+    * **Resampling**: Standardizes all inputs to 256 Hz.
+    * **Filtering**: Applies a 5th-order Butterworth bandpass filter (0.5 - 50 Hz) to remove DC drift and high-frequency noise.
+    * **Notch Filter**: Removes 50/60 Hz power line interference.
+3. **Feature Engineering**:
+    * Computes **Power Spectral Density (PSD)** using Welch's method (Hamming window, 50% overlap).
+    * Calculates **Relative Band Power (RBP)** for 5 bands: Delta (0.5-4Hz), Theta (4-8Hz), Alpha (8-13Hz), Beta (13-30Hz), Gamma (30-45Hz).
+    * Derives clinical ratios: **Theta/Beta Ratio (TBR)** and **Delta/Alpha Ratio (DAR)**.
+4. **Classification**: A trained Random Forest classifier (100 trees) predicts the probability of cognitive impairment based on the feature vector.
 
 ```mermaid
 graph TD
@@ -115,59 +124,70 @@ graph TD
     end
 ```
 
-### 2. 🗣️ Speech & Linguistic Module
-This module utilizes a **dual-stream architecture** to analyze both *how* the user speaks (Acoustic) and *what* they say (Linguistic).
+### 2. 🗣️ High-Fidelity Speech & MMSE Module
+
+This module utilizes a **clinical-grade dual-stream architecture** to analyze both *how* the user speaks (Acoustic) and *what* they say (Linguistic), integrated with localized MMSE assessment logic.
 
 **Technical Workflow:**
-1.  **Acoustic Stream**:
-    *   **VAD (Voice Activity Detection)**: Segments speech from silence using energy thresholds.
-    *   **Prosodic Features**: Extracts pitch (F0), jitter (micro-fluctuations in pitch), and shimmer (micro-fluctuations in loudness).
-    *   **Temporal Features**: Measures Speech-to-Pause Ratio (SPR) and Articulation Rate.
-2.  **Linguistic Stream**:
-    *   **ASR**: Uses **OpenAI Whisper (Base model)** for robust transcription.
-    *   **NLP Pipeline**: Tokenizes text to calculate **Type-Token Ratio (TTR)** (vocabulary richness) and dependency depth (syntactic complexity).
-    *   **Sentiment**: Analyzes emotional valence (apathy is a risk factor).
+
+1. **Acoustical Stream**:
+    * **Clinical VAD**: Real-time Voice Activity Detection using energy thresholds and Mel-frequency analysis for automatic recording management.
+    * **Interactive Fluency**: Generates a millisecond-precision **Fluency Timeline** visualizing speech vs. silence segments using `librosa`.
+    * **Acoustic Biomarkers**: Extracts fundamental frequency (F0), **Jitter**, **Shimmer**, and spectral energy variance to identify subtle neuro-motor changes.
+2. **Linguistic & MMSE Stream**:
+    * **Whisper AI**: Industry-standard transcription with clinical-context prompting to handle hesitant or dysfluent speech.
+    * **Semantic Scoring**: Automated MMSE grading using **Levenshtein distance** and **spaCy NLP** to validate orientations (Date, Location) and cognitive responses.
+    * **Stutter Detection**: Identifies repeated word patterns and dysfluency markers as early indicators of cognitive load.
 
 ```mermaid
 graph TD
-    Input[Microphone Input] --> VAD[WebRTC VAD]
-    VAD -->|Speech Segments| Parallel{Split Stream}
+    Input[Microphone Input] --> VAD[WebRTC / Energy VAD]
+    VAD -->|Segmented Audio| Parallel{Split Stream}
 
-    subgraph "Stream A: Acoustic Analysis (Librosa)"
+    subgraph "Acoustic Biomarkers (Librosa)"
         Parallel --> AudioProc[Signal Processing]
-        AudioProc --> MFCC[MFCC Extraction]
-        AudioProc --> F0["Fundamental Freq (F0)"]
-        AudioProc --> Silence[Silence/Pause Analysis]
-
-        F0 --> Jitter[Jitter & Shimmer]
-        Silence --> PauseDur[Avg Pause Duration]
+        AudioProc --> MFCC[MFCC & Pitch Tracking]
+        AudioProc --> Timeline[Fluency Timeline Gen]
+        AudioProc --> Dynamics[Jitter & Shimmer]
     end
 
-    subgraph "Stream B: Linguistic Analysis (Whisper + NLP)"
-        Parallel --> ASR[Whisper ASR Model]
+    subgraph "Linguistic AI (Whisper + NLP)"
+        Parallel --> ASR[Whisper Clinical ASR]
         ASR --> Text[Transcribed Text]
-
-        Text --> Tokenizer[Tokenizer]
-        Tokenizer --> TTR[Type-Token Ratio]
-        Tokenizer --> POS[Part-of-Speech Tagging]
-        POS --> Syntax[Syntactic Complexity]
+        Text --> Parser[Semantic Similarity Engine]
+        Text --> Stutter[Stutter Analysis]
+        Parser --> MMSE[MMSE Score Engine]
     end
 
-    Jitter & PauseDur & TTR & Syntax --> Fusion[Feature Fusion]
-    Fusion --> Classifier[Logistic Regression]
-    Classifier --> RiskScore[Speech Risk Score]
+    MFCC & Timeline & MMSE & Stutter --> Dash[Assistant Diagnostic Dashboard]
+    Dash --> RiskScore[Bio-Acoustic Risk Score]
 ```
 
-### 3. 🎮 Cognitive Games Module
+### 3. 🚶 IoT Gait & Kinematic Module
+
+Analyzes spatial-temporal gait parameters as a biomarker for neurodegenerative risk, focusing on gait variability and postural stability.
+
+**Technical Workflow:**
+
+1. **Data Ingestion**: Receives 3-axis accelerometer and gyroscope telemetry via high-frequency ESP32 streams or mobile sensor proxies.
+2. **Kinematic Feature Extraction**:
+    * **Step Regularity**: Analyzes the periodicity of movement peaks to detect gait irregularity.
+    * **Velocity & Cadence**: Calculates steps-per-minute and travel speed as key vitality markers.
+    * **Balance Metrics**: Measures postural sway and mediolateral stability using raw IMU data.
+3. **Risk Mapping**: Correlates kinematic instability with established clinical benchmarks for cognitive impairment.
+
+### 4. 🎮 Cognitive Games Module
+
 The games module is an event-driven system that captures high-resolution behavioral data (millisecond precision) to map performance to specific cognitive domains.
 
 **Technical Workflow:**
-1.  **Event Loop**: React `requestAnimationFrame` loop captures user inputs with <16ms latency.
-2.  **Metric Calculation**:
-    *   **Stroop**: Calculates "Interference Score" (Reaction Time Incongruent - Reaction Time Congruent).
-    *   **Trail Making**: Tracks "Time to Completion" and "Error Rate" (wrong node connections).
-    *   **Memory**: Measures "Span" (max items recalled) and "Working Memory Accuracy".
-3.  **Normalization**: Raw scores are Z-scored against age-matched population norms (simulated) to determine percentiles.
+
+1. **Event Loop**: React `requestAnimationFrame` loop captures user inputs with <16ms latency.
+2. **Metric Calculation**:
+    * **Stroop**: Calculates "Interference Score" (Reaction Time Incongruent - Reaction Time Congruent).
+    * **Trail Making**: Tracks "Time to Completion" and "Error Rate" (wrong node connections).
+    * **Memory**: Measures "Span" (max items recalled) and "Working Memory Accuracy".
+3. **Normalization**: Raw scores are Z-scored against age-matched population norms (simulated) to determine percentiles.
 
 ```mermaid
 graph TD
@@ -201,12 +221,14 @@ graph TD
 ## 🧩 Core Modules
 
 ### 1. 🧠 EEG Analysis Engine
+
 The EEG module processes raw brainwave data (EDF/CSV formats) to detect spectral abnormalities associated with cognitive decline, such as the "slowing" of background rhythms (increased Theta/Delta, decreased Alpha/Beta).
 
 **Key Capabilities:**
-*   **Signal Preprocessing**: Artifact removal and bandpass filtering.
-*   **Feature Extraction**: Calculates Relative Band Power (RBP) for Delta, Theta, Alpha, Beta, and Gamma bands.
-*   **ML Inference**: Random Forest classifier trained on clinical EEG datasets.
+
+* **Signal Preprocessing**: Artifact removal and bandpass filtering.
+* **Feature Extraction**: Calculates Relative Band Power (RBP) for Delta, Theta, Alpha, Beta, and Gamma bands.
+* **ML Inference**: Random Forest classifier trained on clinical EEG datasets.
 
 ```python
 # Snippet: Feature Extraction Logic
@@ -230,76 +252,55 @@ def extract_features(data, fs=256):
     return np.array(features)
 ```
 
-### 2. 🗣️ Speech & Linguistic Analysis
-This module analyzes spontaneous speech to find subtle markers of cognitive impairment, such as hesitation, reduced vocabulary, and acoustic flatness.
+### 2. 🗣️ Enhanced Speech & MMSE Engine
+
+The speech module analyzes spontaneous responses and standardized MMSE questions to detect subtle markers of cognitive impairment, such as hesitation, reduced vocabulary, and acoustic flatness.
 
 **Key Capabilities:**
-*   **Transcription**: Uses **OpenAI Whisper** for high-accuracy speech-to-text.
-*   **Acoustic Analysis**: Extracts jitter, shimmer, pitch variability, and pause duration using `librosa`.
-*   **Linguistic Analysis**: Measures lexical diversity (TTR) and syntactic complexity.
 
-```python
-# Snippet: Acoustic Feature Extraction
-def analyze_speech_features(audio_path):
-    y, sr = librosa.load(audio_path)
+* **Transcription**: Uses **OpenAI Whisper** with specific clinical prompting for high-accuracy speech-to-text.
+* **Acoustic Biomarkers**: Extracts jitter, shimmer, and pitch variability using `librosa` to monitor neuro-motor health.
+* **Fluency Visualization**: Real-time Interactive **Fluency Timeline** for assistants to visualize patient dysfluencies.
+* **Semantic Scoring**: Validates MMSE orientation and cognitive questions using Levenshtein distance against a standardized 53-question bank.
 
-    # Extract Pitch (F0)
-    f0, voiced_flag, voiced_probs = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
+### 3. 🚶 IoT Gait Monitoring
 
-    # Calculate Pause Duration (Silence Analysis)
-    intervals = librosa.effects.split(y, top_db=20)
-    silence_duration = (len(y) - sum(len(i) for i in intervals)) / sr
+A kinematic diagnostic module that integrates with IoT sensors to track spatial-temporal movement patterns as a biomarker for frailty and cognitive risk.
 
-    return {
-        "avg_pitch": np.nanmean(f0),
-        "pause_duration": silence_duration,
-        "speech_rate": len(transcribed_text.split()) / (len(y)/sr)
-    }
-```
+**Key Capabilities:**
 
-### 3. 🎮 Cognitive Gamification
-A suite of interactive neuropsychological tests gamified to assess specific cognitive domains.
+* **IoT Stream Integration**: Processes high-frequency telemetry from ESP32/MPU6050 devices or mobile proxies.
+* **Gait Variability**: Analyzes step regularity and mediolateral stability.
+* **Clinical Correlation**: Maps kinematic data to established risk profiles for dementia and fall risk.
 
-*   **Memory Match**: Visual working memory.
-*   **Stroop Test**: Selective attention and inhibition.
-*   **Trail Making**: Executive function and processing speed.
-*   **Pattern Recognition**: Fluid intelligence.
+### 4. 🎮 Cognitive Gamification & MMSE
 
-**Implementation:**
-React components capture millisecond-precision reaction times and accuracy metrics, which are then normalized against age-matched baselines in the backend.
+A suite of interactive neuropsychological tests and a digitalized MMSE workflow.
 
-### 4. 📊 Unified Intelligence (Fusion Engine)
-The brain of the system. It aggregates results from all three modalities to produce a final weighted risk score.
+* **Memory Match**: Visual working memory assessment.
+* **Stroop Test**: Selective attention and inhibition tracking.
+* **Bulk OCR**: Converts paper-based MMSE records to structured digital data using Vision AI parsing.
 
-**Fusion Logic:**
-*   **EEG Weight**: 40% (Objective physiological data)
-*   **Speech Weight**: 35% (Strong biomarker correlation)
-*   **Games Weight**: 25% (Behavioral performance)
+### 5. 🏥 Clinical Workflows & Booking
 
-```python
-# Snippet: Unified Scoring Logic
-def calculate_overall_risk(eeg_score, speech_score, game_score):
-    weights = {"eeg": 0.40, "speech": 0.35, "games": 0.25}
+A comprehensive specialist ecosystem for patients identified with elevated risk.
 
-    weighted_score = (
-        (eeg_score * weights["eeg"]) +
-        (speech_score * weights["speech"]) +
-        (game_score * weights["games"])
-    )
+* **Specialist Recommendation**: Engine that matches patients to doctors based on specific cognitive deficit profiles.
+* **Telehealth Booking**: Full calendar integration for appointment scheduling and invoicing.
 
-    risk_level = "Low" if weighted_score < 40 else "High" if weighted_score > 70 else "Medium"
-    return weighted_score, risk_level
-```
+### 6. 📊 Unified Multi-Modal Intelligence
+
+The core fusion engine that aggregates weighted data from all modalities (EEG, Speech, Games, Gait) to produce a final clinical risk assessment.
 
 ---
 
 ## ✨ Key Features
 
-*   **⚡ Real-Time Analysis**: Instant feedback on cognitive tests and EEG uploads.
-*   **🔄 Session Persistence**: Robust state management allows users to refresh or return to the dashboard without losing progress.
-*   **🛡️ Privacy-First**: All data is processed locally or via secure endpoints; no data is shared with third parties.
-*   **📈 Comprehensive Reporting**: Generates detailed PDF-ready reports with radar charts for cognitive domains (Memory, Attention, Language, etc.).
-*   **🎯 Domain-Specific Scoring**: Breaks down performance into granular cognitive categories rather than just a single number.
+* **⚡ Real-Time Clinical Telemetry**: Instant feedback on speech fluency, acoustic biomarkers, and cognitive performance via the Assistant Dashboard.
+* **📈 Interactive Fluency Timelines**: Visual representation of speech activity allowing clinicians to pinpoint specific dysfluent moments.
+* **🛡️ Clinical VAD**: Intelligent Voice Activity Detection that automatically manages recordings for clinicians.
+* **🧠 Multi-Modal Data Fusion**: Synthesizes neurophysiological, kinematic, and behavioral data for superior diagnostic accuracy.
+* **Printable Reports**: Generates detailed, professional reports with cognitive domain radar charts and doctor recommendations.
 
 ---
 
@@ -308,11 +309,13 @@ def calculate_overall_risk(eeg_score, speech_score, game_score):
 Follow these steps to set up CogniSafe on your local machine.
 
 ### Prerequisites
-*   Python 3.9+
-*   Node.js 16+
-*   FFmpeg (for audio processing)
+
+* Python 3.12+
+* Node.js 18+
+* FFmpeg (for audio processing)
 
 ### 1. Backend Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/cogni-safe.git
@@ -328,9 +331,11 @@ pip install -r requirements.txt
 # Run the server
 uvicorn app.main:app --reload
 ```
+
 *Server will start at `http://localhost:8000`*
 
 ### 2. Frontend Setup
+
 ```bash
 cd ../frontend
 
@@ -340,16 +345,18 @@ npm install
 # Start the development server
 npm run dev
 ```
+
 *App will launch at `http://localhost:5173`*
 
 ---
 
 ## 💻 Tech Stack
 
-| Component | Technologies |
-|-----------|--------------|
-| **Frontend** | React, TypeScript, Tailwind CSS, Recharts, Framer Motion |
-| **Backend** | Python, FastAPI, SQLAlchemy, Pydantic |
-| **Database** | SQLite (Development), PostgreSQL (Production ready) |
-| **ML & Data** | Scikit-learn, NumPy, Pandas, PyEEG |
-| **Audio** | OpenAI Whisper, Librosa, PyDub |
+| Component            | Technologies                                                |
+|----------------------|-------------------------------------------------------------|
+| **Frontend**         | React, TypeScript, Tailwind CSS, **Recharts**, Framer Motion |
+| **Backend**          | Python, FastAPI, SQLAlchemy (PostgreSQL), Pydantic          |
+| **ML & Signal**      | Scikit-learn, NumPy, Pandas, **Librosa**, **spaCy**         |
+| **Generative AI**    | OpenAI Whisper (Clinical Context), Vision AI (OCR)          |
+| **Audio/Media**      | Web Audio API, `MediaRecorder`, FFmpeg                      |
+| **Hardware**         | ESP32, MPU6050 (IoT Telemetry Proxies)                      |
