@@ -109,11 +109,14 @@ export const getMMSEQuestions = async (): Promise<MMSEQuestion[]> => {
     return response.json();
 };
 
-export const evaluateMMSEVerbal = async (questionId: number, text: string): Promise<MMSEResponse> => {
+export const evaluateMMSEVerbal = async (questionId: number, audioBlob: Blob): Promise<MMSEResponse> => {
+    const formData = new FormData();
+    formData.append("question_id", questionId.toString());
+    formData.append("file", audioBlob, "mmse_response.wav");
+
     const response = await fetch(`${API_URL}/api/mmse/evaluate/verbal`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question_id: questionId, text_content: text }),
+        body: formData,
     });
     if (!response.ok) throw new Error("Verbal evaluation failed");
     return response.json();

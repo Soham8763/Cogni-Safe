@@ -1,381 +1,393 @@
 [
-  {
-    "id": 1,
-    "text": "What is today’s full date?",
-    "type": "date",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 2,
-    "text": "What day of the week is it?",
-    "type": "day",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 3,
-    "text": "What season are we in?",
-    "type": "season",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 4,
-    "text": "What city are we in right now?",
-    "type": "location",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 5,
-    "text": "What year did you last celebrate a major festival?",
-    "type": "recall_year",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 6,
-    "text": "Subtract 7 from 100 once.",
-    "type": "math",
-    "expected": "93",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 7,
-    "text": "Spell the word WORLD backwards.",
-    "type": "spelling",
-    "expected": "DLROW",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 8,
-    "text": "Repeat these numbers backward: 4 – 9 – 2",
-    "type": "sequence",
-    "expected": "2-9-4",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 9,
-    "text": "Say the months of the year in reverse order.",
-    "type": "sequence_months",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 10,
-    "text": "Name as many animals as you can in 60 seconds.",
-    "type": "fluency",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 11,
-    "text": "What do people use a key for?",
-    "type": "functional",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 12,
-    "text": "How are a train and a bicycle similar?",
-    "type": "abstraction",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 13,
-    "text": "Repeat: “No ifs, ands, or buts.”",
-    "type": "repetition",
-    "expected": "No ifs, ands, or buts",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 14,
-    "text": "Copy this simple geometric shape.",
-    "type": "visuospatial",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 15,
-    "text": "Draw a clock showing 10 minutes past 11.",
-    "type": "clock_drawing",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 16,
-    "text": "What are the steps to mail a letter?",
-    "type": "procedural",
-    "level": "Level 1: Normal",
-    "score": 1
-  },
-  {
-    "id": 17,
-    "text": "What month is it?",
-    "type": "date_month",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 18,
-    "text": "What place are we in right now?",
-    "type": "location_place",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 19,
-    "text": "Are we in a hospital, clinic, or home?",
-    "type": "location_type",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 20,
-    "text": "Remember these words: Apple – Chair – Coin",
-    "type": "immediate_recall",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 21,
-    "text": "What were the three words I asked you to remember?",
-    "type": "delayed_recall",
-    "expected": ["apple", "chair", "coin"],
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 22,
-    "text": "What did you eat for breakfast today?",
-    "type": "recent_memory",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 23,
-    "text": "Count backward from 20 to 1.",
-    "type": "math_counting",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 24,
-    "text": "Subtract 3 from 20, then again.",
-    "type": "math_subtraction",
-    "expected": ["17", "14"],
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 25,
-    "text": "Repeat these numbers: 6 – 1 – 8 – 4",
-    "type": "repetition_numbers",
-    "expected": "6-1-8-4",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 26,
-    "text": "What is this object called? (Identify Pen / Watch)",
-    "type": "identification",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 27,
-    "text": "Command: Close your eyes.",
-    "type": "command_execution",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 28,
-    "text": "Write a complete sentence.",
-    "type": "writing",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 29,
-    "text": "Touch your right hand to your left shoulder.",
-    "type": "motor_coordination",
-    "level": "Level 2: Mild",
-    "score": 1
-  },
-  {
-    "id": 30,
-    "text": "What time of day is it right now?",
-    "type": "orientation_time",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 31,
-    "text": "Do you know where you are?",
-    "type": "orientation_place",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 32,
-    "text": "Is it day or night?",
-    "type": "orientation_day_night",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 33,
-    "text": "What is the name of this place?",
-    "type": "orientation_place_name",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 34,
-    "text": "What is your full name?",
-    "type": "personal_info",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 35,
-    "text": "Who usually comes with you to the hospital or home? (Who came with you today?)",
-    "type": "social_context",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 36,
-    "text": "Clap your hands two times.",
-    "type": "motor_command",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 37,
-    "text": "Touch your nose, then your ear.",
-    "type": "motor_sequence",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 38,
-    "text": "What is this used for? (Spoon / Cup)",
-    "type": "functional_id",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 39,
-    "text": "Can you repeat this word: “House”?",
-    "type": "repetition_simple",
-    "expected": "house",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 40,
-    "text": "Take the paper and place it on the table.",
-    "type": "task_completion",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 41,
-    "text": "Identify the sound: Does this sound like wood or metal?",
-    "type": "sensory_identification",
-    "level": "Level 3: Moderate",
-    "score": 1
-  },
-  {
-    "id": 42,
-    "text": "Are you a man or woman?",
-    "type": "self_recognition",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 43,
-    "text": "Are you sitting or lying down?",
-    "type": "postural_awareness",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 44,
-    "text": "Is it hot or cold right now?",
-    "type": "sensory_awareness",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 45,
-    "text": "Can you recognize this object?",
-    "type": "recognition_object",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 46,
-    "text": "Do you recognize this person?",
-    "type": "recognition_person",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 47,
-    "text": "Open your mouth.",
-    "type": "motor_face",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 48,
-    "text": "Close your eyes.",
-    "type": "motor_face_eyes",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 49,
-    "text": "Raise your hand.",
-    "type": "motor_arm",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 50,
-    "text": "Point to the door.",
-    "type": "orientation_spatial",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 51,
-    "text": "Are you comfortable right now?",
-    "type": "wellbeing_check",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 52,
-    "text": "Does this sound loud or soft?",
-    "type": "sensory_sound",
-    "level": "Level 4: Severe",
-    "score": 1
-  },
-  {
-    "id": 53,
-    "text": "Can you smile?",
-    "type": "motor_expression",
-    "level": "Level 4: Severe",
-    "score": 1
-  }
+    {
+        "id": 1,
+        "text": "What is today’s full date?",
+        "type": "date",
+        "expected": "DYNAMIC_DATE",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 2,
+        "text": "What day of the week is it?",
+        "type": "day",
+        "expected": "DYNAMIC_DAY",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 3,
+        "text": "What season are we in?",
+        "type": "season",
+        "expected": "DYNAMIC_SEASON",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 4,
+        "text": "What city are we in right now?",
+        "type": "location",
+        "expected": "DYNAMIC_LOCATION",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 5,
+        "text": "What year did you last celebrate a major festival?",
+        "type": "recall_year",
+        "expected": "DYNAMIC_YEAR",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 6,
+        "text": "Subtract 7 from 100 once.",
+        "type": "math",
+        "expected": "93",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 7,
+        "text": "Spell the word WORLD backwards.",
+        "type": "spelling",
+        "expected": "DLROW",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 8,
+        "text": "Repeat these numbers backward: 4 – 9 – 2",
+        "type": "sequence",
+        "expected": "2-9-4",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 9,
+        "text": "Say the months of the year in reverse order.",
+        "type": "sequence_months",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 10,
+        "text": "Name as many animals as you can in 60 seconds.",
+        "type": "fluency",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 11,
+        "text": "What do people use a key for?",
+        "type": "functional",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 12,
+        "text": "How are a train and a bicycle similar?",
+        "type": "abstraction",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 13,
+        "text": "Repeat: “No ifs, ands, or buts.”",
+        "type": "repetition",
+        "expected": "No ifs, ands, or buts",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 14,
+        "text": "Copy this simple geometric shape.",
+        "type": "visuospatial",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 15,
+        "text": "Draw a clock showing 10 minutes past 11.",
+        "type": "clock_drawing",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 16,
+        "text": "What are the steps to mail a letter?",
+        "type": "procedural",
+        "level": "Level 1: Normal",
+        "score": 1
+    },
+    {
+        "id": 17,
+        "text": "What month is it?",
+        "type": "date_month",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 18,
+        "text": "What place are we in right now?",
+        "type": "location_place",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 19,
+        "text": "Are we in a hospital, clinic, or home?",
+        "type": "location_type",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 20,
+        "text": "Remember these words: Apple – Chair – Coin",
+        "type": "immediate_recall",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 21,
+        "text": "What were the three words I asked you to remember?",
+        "type": "delayed_recall",
+        "expected": [
+            "apple",
+            "chair",
+            "coin"
+        ],
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 22,
+        "text": "What did you eat for breakfast today?",
+        "type": "recent_memory",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 23,
+        "text": "Count backward from 20 to 1.",
+        "type": "math_counting",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 24,
+        "text": "Subtract 3 from 20, then again.",
+        "type": "math_subtraction",
+        "expected": [
+            "17",
+            "14"
+        ],
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 25,
+        "text": "Repeat these numbers: 6 – 1 – 8 – 4",
+        "type": "repetition_numbers",
+        "expected": "6-1-8-4",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 26,
+        "text": "What is this object called? (Identify Pen / Watch)",
+        "type": "identification",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 27,
+        "text": "Command: Close your eyes.",
+        "type": "command_execution",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 28,
+        "text": "Write a complete sentence.",
+        "type": "writing",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 29,
+        "text": "Touch your right hand to your left shoulder.",
+        "type": "motor_coordination",
+        "level": "Level 2: Mild",
+        "score": 1
+    },
+    {
+        "id": 30,
+        "text": "What time of day is it right now?",
+        "type": "orientation_time",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 31,
+        "text": "Do you know where you are?",
+        "type": "orientation_place",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 32,
+        "text": "Is it day or night?",
+        "type": "orientation_day_night",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 33,
+        "text": "What is the name of this place?",
+        "type": "orientation_place_name",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 34,
+        "text": "What is your full name?",
+        "type": "personal_info",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 35,
+        "text": "Who usually comes with you to the hospital or home? (Who came with you today?)",
+        "type": "social_context",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 36,
+        "text": "Clap your hands two times.",
+        "type": "motor_command",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 37,
+        "text": "Touch your nose, then your ear.",
+        "type": "motor_sequence",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 38,
+        "text": "What is this used for? (Spoon / Cup)",
+        "type": "functional_id",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 39,
+        "text": "Can you repeat this word: “House”?",
+        "type": "repetition_simple",
+        "expected": "house",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 40,
+        "text": "Take the paper and place it on the table.",
+        "type": "task_completion",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 41,
+        "text": "Identify the sound: Does this sound like wood or metal?",
+        "type": "sensory_identification",
+        "level": "Level 3: Moderate",
+        "score": 1
+    },
+    {
+        "id": 42,
+        "text": "Are you a man or woman?",
+        "type": "self_recognition",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 43,
+        "text": "Are you sitting or lying down?",
+        "type": "postural_awareness",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 44,
+        "text": "Is it hot or cold right now?",
+        "type": "sensory_awareness",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 45,
+        "text": "Can you recognize this object?",
+        "type": "recognition_object",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 46,
+        "text": "Do you recognize this person?",
+        "type": "recognition_person",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 47,
+        "text": "Open your mouth.",
+        "type": "motor_face",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 48,
+        "text": "Close your eyes.",
+        "type": "motor_face_eyes",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 49,
+        "text": "Raise your hand.",
+        "type": "motor_arm",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 50,
+        "text": "Point to the door.",
+        "type": "orientation_spatial",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 51,
+        "text": "Are you comfortable right now?",
+        "type": "wellbeing_check",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 52,
+        "text": "Does this sound loud or soft?",
+        "type": "sensory_sound",
+        "level": "Level 4: Severe",
+        "score": 1
+    },
+    {
+        "id": 53,
+        "text": "Can you smile?",
+        "type": "motor_expression",
+        "level": "Level 4: Severe",
+        "score": 1
+    }
 ]

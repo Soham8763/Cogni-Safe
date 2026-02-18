@@ -6,16 +6,14 @@ import numpy as np
 import librosa
 from typing import Dict, Any, List
 
-def detect_pauses_from_audio(audio_path: str, min_silence_duration: float = 0.3) -> Dict[str, Any]:
+def detect_pauses_from_audio(audio_path: str, min_silence_duration: float = 0.3, y_sr: tuple = None) -> Dict[str, Any]:
     """
     Detect pauses by analyzing the audio waveform directly.
 
     Args:
         audio_path: Path to audio file
         min_silence_duration: Minimum duration (seconds) to consider as a pause
-
-    Returns:
-        Dictionary with pause statistics
+        y_sr: Optional pre-loaded (y, sr) tuple
     """
     print(f"\n{'='*70}")
     print(f"🎵 AUDIO-BASED PAUSE DETECTION STARTING...")
@@ -25,9 +23,13 @@ def detect_pauses_from_audio(audio_path: str, min_silence_duration: float = 0.3)
 
     try:
         # Load audio
-        print("   Loading audio...")
-        y, sr = librosa.load(audio_path, sr=None)
-        print(f"   ✅ Audio loaded: {len(y)} samples at {sr}Hz ({len(y)/sr:.2f}s)")
+        if y_sr:
+            y, sr = y_sr
+            print(f"   Using pre-loaded audio: {len(y)} samples at {sr}Hz")
+        else:
+            print("   Loading audio...")
+            y, sr = librosa.load(audio_path, sr=None)
+            print(f"   ✅ Audio loaded: {len(y)} samples at {sr}Hz ({len(y)/sr:.2f}s)")
 
         # Calculate RMS energy (volume) over time
         frame_length = int(sr * 0.025)  # 25ms frames

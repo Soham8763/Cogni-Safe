@@ -1,6 +1,10 @@
 import os
 from openai import OpenAI
 import io
+from dotenv import load_dotenv
+
+# Ensure .env is loaded before reading API keys
+load_dotenv()
 
 # Initialize OpenAI client
 # Ensure OPENAI_API_KEY is set in environment
@@ -30,7 +34,8 @@ def transcribe_with_timestamps(audio_file_path: str):
                 model="whisper-1",
                 file=audio_file,
                 response_format="verbose_json",
-                timestamp_granularities=["word"]
+                timestamp_granularities=["word"],
+                prompt="The speaker is a clinical patient undergoing the Mini-Mental State Examination (MMSE). Expect cognitive responses, spelling words backwards, and potentially slurred or hesitant speech. Accuracy is critical for diagnosis."
             )
 
         return {
